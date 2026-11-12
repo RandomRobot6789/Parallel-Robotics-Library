@@ -17,5 +17,12 @@ def distribute_angles(theta):
 class StewartPlatform(prl.ParallelRobot):
     def __init__(self, rbase: float, thetabase: float, rend: float, thetaend: float):
         base_angles = distribute_angles(thetabase)
-        end_angels = distribute_angles(thetaend)
-        
+        end_angles = distribute_angles(thetaend)
+        joints = []
+        for joint_no in range(6):
+            joints.append((
+                [rbase * np.cos(base_angles[joint_no]), rbase * np.sin(base_angles[joint_no]), 0], 
+                [rbase * np.cos(end_angles[joint_no]), rbase * np.sin(end_angles[joint_no]), 0],
+            ))
+        super().__init__(joints)
+    

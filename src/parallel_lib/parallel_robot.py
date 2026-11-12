@@ -12,7 +12,7 @@ class ParallelRobot:
         in the manipulator frame
         """
         self.n = len(actuators)
-        self.cables = actuators
+        self.actuators = actuators
 
     def forward_kinematics(self, lengths: list[float]) -> NDArray:
         """

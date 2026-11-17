@@ -16,6 +16,11 @@ def distribute_angles(theta):
 
 class StewartPlatform(prl.ParallelRobot):
     def __init__(self, rbase: float, thetabase: float, rend: float, thetaend: float):
+        '''
+        This code creates a circle to represent the base and then use different angles to get
+        the 3D coordinates for the 6 points we will use for the joints. This works for both
+        the base and the end effector. Thetabase and thetaend are both in radians.
+        '''
         base_angles = distribute_angles(thetabase)
         end_angles = distribute_angles(thetaend + 60)
         joints = []
@@ -25,4 +30,4 @@ class StewartPlatform(prl.ParallelRobot):
                 [rbase * np.cos(end_angles[joint_no]), rbase * np.sin(end_angles[joint_no]), 0],
             ))
         super().__init__(joints)
-    
+

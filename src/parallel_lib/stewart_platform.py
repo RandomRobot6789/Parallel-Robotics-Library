@@ -22,7 +22,7 @@ class StewartPlatform(prl.ParallelRobot):
         the base and the end effector. Thetabase and thetaend are both in radians.
         '''
         base_angles = distribute_angles(thetabase)
-        end_angles = distribute_angles(60 - thetaend)
+        end_angles = distribute_angles(np.pi / 3 - thetaend)
         joints = []
         for joint_no in range(6):
             joints.append((

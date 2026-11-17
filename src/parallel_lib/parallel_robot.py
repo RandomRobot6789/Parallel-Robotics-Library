@@ -3,9 +3,11 @@ from numpy.typing import NDArray
 from typing import Callable, Iterable
 
 class ParallelRobot:
-    def __init__(self, actuators: list[list[float]]):
+    def __init__(self, actuators: list[list[list[float]]]):
         """
         bot = ParallelRobot(cables)
+
+        Creates an instance of a parallel robot. Assumes prismatic joints, not rotary ones.
 
         :param list[list[float]] cables: n length list where each entry is a tuple of two 3-vectors in homogenous representation.
         The first vector is the actuator mounting point in the base frame, while the second is the actuator mounting point

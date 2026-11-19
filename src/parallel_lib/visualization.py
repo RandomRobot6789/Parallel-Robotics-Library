@@ -4,6 +4,7 @@ from parallel_lib import parallel_robot
 
 class Visualization:
     def __init__(self, robot: parallel_robot.ParallelRobot, T):
+        self.robot = robot
         base_vertices = np.array([robot.actuators[i][0][:3] for i in range(robot.n)])
         end_vertices = np.array([(T @ robot.actuators[i][1])[:3] for i in range(robot.n)])
         face = np.array([[6, 0, 1, 2, 3, 4, 5]])
@@ -21,6 +22,18 @@ class Visualization:
             self.actuator_actors.append(self.pl.add_mesh(line.tube(radius = 0.06), scalars = None, color='gray'))
 
         self.pl.add_axes()
-        self.pl.show()
+        self.pl.show(interactive_update = True)
+    def reposition(self, T):   
+        if self.pl.render_window is None:
+            return    
+        base_vertices = np.array([self.robot.actuators[i][0][:3] for i in range(self.robot.n)])
+        end_vertices = np.array([(T @ self.robot.actuators[i][1])[:3] for i in range(self.robot.n)])
+        face = np.array([[6, 0, 1, 2, 3, 4, 5]])
 
-    
+        self.end_actor.mapper.dataset.copy_from(pv.PolyData(end_vertices, face))
+
+        for i in range(self.robot.n):   
+            line = pv.Line(base_vertices[i], end_vertices[i])
+            self.actuator_actors[i].mapper.dataset.copy_from(line.tube(radius = 0.06))
+        self.pl.update()
+

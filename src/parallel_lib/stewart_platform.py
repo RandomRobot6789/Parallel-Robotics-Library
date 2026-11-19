@@ -27,7 +27,7 @@ class StewartPlatform(prl.ParallelRobot):
         for joint_no in range(6):
             joints.append((
                 [rbase * np.cos(base_angles[joint_no]), rbase * np.sin(base_angles[joint_no]), 0, 1], 
-                [rbase * np.cos(end_angles[joint_no]), rbase * np.sin(end_angles[joint_no]), 0, 1],
+                [rend * np.cos(end_angles[joint_no]), rend * np.sin(end_angles[joint_no]), 0, 1],
             ))
         super().__init__(joints)
     def len_to_pose(self,joints:list,length:list,height:int):

@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import Callable, Iterable
+import utilities as ut
 
 class ParallelRobot:
     def __init__(self, actuators: list[list[list[float]]]):
@@ -36,6 +37,26 @@ class ParallelRobot:
         return lengths
 
     def forward_kinematics(self, lengths: list[float]) -> NDArray:
+
+        pos = np.array([0,0,0,0,0,0])
+        if pos[0] > np.max(lengths) or pos[1] > np.max(lengths) or pos[2] > np.max(lengths):
+            print('Error! Point is too far for the joint to reach') 
+        R = ut.rotx(pos[3]) @ ut.roty(pos[4]) @ ut.rotz(pos[5])
+        p = np.array([pos[0],pos[1],pos[2]])
+        T = ut.se3(R,p)
+        test_length = self.inverse_kinematics(T)
+        error = lengths-test_length
+        def jacob(self,pos: list[float]):
+            self.n = len(lengths)
+            Answer = np.zeros([6,self.n])
+            for i in range(self.n):
+                R = ut.rotx(pos[3]) @ ut.roty(pos[4]) @ ut.rotz(pos[5])
+                p = np.array([pos[0],pos[1],pos[2]])
+                z = R[:,3]
+                J_v = z
+
+                
+        return Answer
         
         """
         T_end = bot.forward_kinematics(lengths)

@@ -16,19 +16,6 @@ class ParallelRobot:
         self.n = len(actuators)
         self.actuators = actuators
 
-    def forward_kinematics(self, lengths: list[float]) -> NDArray:
-        """
-        T_end = bot.forward_kinematics(lengths)
-
-        Returns the transform from the base frame to the end frame given a set of
-        actuator lengths.
-
-        :param list[float] lengths: list or iterable of floats which represent the actuator lengths.
-
-        :return T: the 4 x 4 homogeneous transform between the specified frames.
-        """
-
-        return
 
     def inverse_kinematics(self, T: NDArray) -> list[float]:
         """
@@ -47,3 +34,18 @@ class ParallelRobot:
             end_vector = T @ self.actuators[joint_no][1]
             lengths.append(length(end_vector - base_vector))
         return lengths
+
+    def forward_kinematics(self, lengths: list[float]) -> NDArray:
+        
+        """
+        T_end = bot.forward_kinematics(lengths)
+
+        Returns the transform from the base frame to the end frame given a set of
+        actuator lengths.
+
+        :param list[float] lengths: list or iterable of floats which represent the actuator lengths.
+
+        :return T: the 4 x 4 homogeneous transform between the specified frames.
+        """
+
+        return

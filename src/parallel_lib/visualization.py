@@ -1,29 +1,39 @@
 import numpy as np
 import pyvista as pv
+from parallel_lib import parallel_robot
 
-import parallel_lib.stewart_platform as stew
-import parallel_lib.utilities
+class Visualization:
+    def __init__(self, robot: parallel_robot.ParallelRobot, T):
+        self.robot = robot
+        base_vertices = np.array([robot.actuators[i][0][:3] for i in range(robot.n)])
+        end_vertices = np.array([(T @ robot.actuators[i][1])[:3] for i in range(robot.n)])
+        face = np.array([[6, 0, 1, 2, 3, 4, 5]])
 
-T = parallel_lib.utilities.se3(parallel_lib.utilities.roty(np.pi / 12), np.array([1, 0, 2]))
+        surface_base = pv.PolyData(base_vertices, face)
+        surface_end = pv.PolyData(end_vertices, face)
 
-robot = stew.StewartPlatform(2, np.pi / 12, 1, np.pi / 12)
+        self.pl = pv.Plotter()
+        self.base_actor = self.pl.add_mesh(surface_base)
+        self.end_actor = self.pl.add_mesh(surface_end)
 
-base_vertices = np.array([robot.actuators[i][0][:3] for i in range(robot.n)])
-end_vertices = np.array([(T @ robot.actuators[i][1])[:3] for i in range(robot.n)])
-face = np.array([[6, 0, 1, 2, 3, 4, 5]])
+        self.actuator_actors = []
+        for i in range(robot.n):   
+            line = pv.Line(base_vertices[i], end_vertices[i])
+            self.actuator_actors.append(self.pl.add_mesh(line.tube(radius = 0.06), scalars = None, color='gray'))
 
-print(base_vertices)
-surface_base = pv.PolyData(base_vertices, face)
-surface_end = pv.PolyData(end_vertices, face)
+        self.pl.add_axes()
+        self.pl.show(interactive_update = True)
+    def reposition(self, T):   
+        if self.pl.render_window is None:
+            return    
+        base_vertices = np.array([self.robot.actuators[i][0][:3] for i in range(self.robot.n)])
+        end_vertices = np.array([(T @ self.robot.actuators[i][1])[:3] for i in range(self.robot.n)])
+        face = np.array([[6, 0, 1, 2, 3, 4, 5]])
 
-pl = pv.Plotter()
-pl.add_mesh(surface_base)
-pl.add_mesh(surface_end)
+        self.end_actor.mapper.dataset.copy_from(pv.PolyData(end_vertices, face))
 
-for i in range(robot.n):   
-    line = pv.Line(base_vertices[i], end_vertices[i])
+        for i in range(self.robot.n):   
+            line = pv.Line(base_vertices[i], end_vertices[i])
+            self.actuator_actors[i].mapper.dataset.copy_from(line.tube(radius = 0.06))
+        self.pl.update()
 
-    pl.add_mesh(line.tube(radius = 0.06))
-
-pl.add_axes()
-pl.show()
